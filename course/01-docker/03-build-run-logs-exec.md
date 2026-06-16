@@ -58,7 +58,7 @@ Check it is running:
 
 ```bash
 docker ps --filter name=hello-web
-curl -s http://localhost:8080/ | head -n 3
+curl -s http://localhost:8080/
 ```
 
 ### Step 2 — Read logs
