@@ -1,0 +1,70 @@
+---
+description: Guidelines for the DevOps learning course (Docker, Kubernetes, Terraform, AWS)
+alwaysApply: true
+---
+
+# DevOps Course Guidelines
+
+## Audience and prerequisites
+
+- The course is for **everyone** — assume the learner knows **nothing** about Docker, Kubernetes, Terraform, AWS, terminals, cloud, or programming.
+- **Explain from the ground up.** If a concept has not been covered earlier in the course, introduce it fully before using it — do not skip steps or say “obviously” / “as you know”.
+- Avoid references to a specific learner profile (for example, don’t tailor content to “network engineers” specifically).
+- When using jargon, **define it in plain language** the first time it appears in that section, or link to an earlier course section / glossary entry.
+- **Repetition is allowed and encouraged** when it helps learning: briefly re-explain a term or idea when it reappears in a new context, even if it was introduced before.
+- If a step depends on something from an earlier chapter, **point to that section** and give a one-sentence recap so the learner does not have to guess.
+
+## Structure and directories
+
+- Each major technology **must live in its own top-level course directory**, for example:
+  - `course/01-docker/`
+  - `course/02-kubernetes/`
+  - `course/03-terraform/`
+  - `course/04-aws/`
+- Inside each technology, structure content as:
+  - chapter/section index file: `README.md`
+  - one **step/section per file**, with clear filenames and ordering (e.g. `01-...md`, `02-...md`).
+- Do **not** merge multiple unrelated steps into a single long file when a clean split is possible.
+
+## Learning curve and pedagogy
+
+- Maintain a **smooth learning curve**:
+  - Start from **conceptual explanation in plain language**.
+  - Then show **small, focused examples**.
+  - Only then move to **more complex or realistic scenarios**.
+- When adding new content:
+  - Prefer **small, incremental steps** over big jumps in difficulty.
+  - **Never assume hidden knowledge** — if you are unsure whether something was explained before, explain it (or link + short recap).
+  - Reuse previously introduced ideas, but **re-introduce them lightly** when the context changes (e.g. “profile” in AWS vs “context” in kubectl).
+  - Add short “You should now be able to…” checklists at the end of each step.
+
+## How to present commands and configuration
+
+- Never just drop a config file and an `apply` command without explanation.
+- Before the first command in a section, state **what the command does** and **why we run it now** (learners may never have seen this tool before).
+- For each important manifest, script, or configuration:
+  - Explain **what problem it solves**.
+  - Explain **why this approach is chosen** over obvious alternatives.
+  - Highlight the **key fields/lines** and what they control.
+  - Only then show the **full config** and the **exact commands** to run.
+- When possible, include:
+  - at least one **“verify”** subsection (commands to confirm it works),
+  - one **“break & repair”** idea (what happens if we change or misconfigure something, and how to debug it),
+  - and one **“cleanup / revert”** idea when the section creates resources (clusters, namespaces, profiles, cloud objects, containers, Terraform state) — explain how to **undo** lab work safely without breaking unrelated setup on the learner’s machine.
+
+## Cleanup and revert
+
+- Every hands-on section that **creates** something should tell the learner how to **remove or undo** it when the lab is done or when they want a clean slate.
+- Prefer **tool-specific** teardown (`kind delete cluster`, `kubectl delete namespace`, `terraform destroy`, editing a named AWS profile block) over vague advice.
+- Clearly separate:
+  - **Lab-only** cleanup (safe, recommended after exercises)
+  - **Optional uninstall** (remove CLI tools — warn that other projects may still need them)
+  - **Do not touch** (e.g. learner’s existing default AWS profile)
+- Link to `course/00-getting-started/00-tooling-setup-cleanup.md` for Phase 0 / cross-cutting undo steps when relevant.
+
+## Tone and style
+
+- Use clear, direct language; keep explanations short but precise.
+- Prefer **step-by-step** headings: “Explanation”, “Implementation”, “Verification”, “Break & repair”, and **“Cleanup / revert”** when the section creates resources.
+- Keep commands copy-pasteable and label clearly which shell they run in (local vs cluster context if needed).
+
