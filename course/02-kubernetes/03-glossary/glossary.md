@@ -21,9 +21,17 @@ Use this page when you see an unfamiliar word. Each term has a longer explanatio
 | PV | Backing persistent storage resource. |
 | Label | Key/value tag for selecting/grouping resources. |
 | Selector | Query on labels used by Services/controllers. |
-| Namespace | Logical resource isolation boundary. |
+| Namespace | Logical scope inside a cluster; groups objects (Pod, Service…) and isolates names. |
 | RBAC | Permission model (who can do what). |
 | kubelet | Node agent that runs Pod workloads. |
 | kube-proxy | Node network component for Service traffic forwarding. |
+| Helm | Package manager for Kubernetes — installs charts as releases. |
+| Chart | Helm package: `Chart.yaml` + `values.yaml` + `templates/`. |
+| Values | Configuration inputs for a chart (`values.yaml`, `--set`, `-f`). |
+| Template | YAML with `{{ .Values… }}` — rendered into manifests. |
+| Repository | HTTP catalog of packaged charts (`helm repo add`). |
+| Package | Compressed chart archive `.tgz` (`helm package`). |
+| Release | One installed chart instance (name + namespace + revision history). |
+| Revision | Numbered snapshot after install, upgrade, or rollback. |
 
-See also: [../02-core-concepts/](../02-core-concepts/)
+See also: [../02-core-concepts/](../02-core-concepts/) · [Helm](../05-helm/)

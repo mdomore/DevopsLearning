@@ -8,6 +8,59 @@ A **ConfigMap** stores **non-sensitive** configuration — settings, feature fla
 
 Examples: `LOG_LEVEL=debug`, a `nginx.conf` snippet, or a JSON config file mounted at `/etc/app/config.json`.
 
+## Example — add to the cluster
+
+**What's new:** configuration stored outside the image; Deployment reads it via env var.
+
+**Before this step:** [Deployment](deployment.md) — `concept-web` running.
+
+Create the ConfigMap:
+
+```bash
+kubectl create configmap concept-config -n kube-lab \
+  --from-literal=GREETING="Hello from ConfigMap"
+```
+
+Wire it into the Deployment (adds one env var to the existing container):
+
+```bash
+kubectl set env deployment/concept-web GREETING= \
+  --from=configmap/concept-config --keys=GREETING
+```
+
+Or add to `03-deployment.yaml` under the container:
+
+```yaml
+        env:
+        - name: GREETING
+          valueFrom:
+            configMapKeyRef:
+              name: concept-config
+              key: GREETING
+```
+
+Then `kubectl apply -f ~/kube-lab/manifests/concepts/03-deployment.yaml`.
+
+### Verify
+
+```bash
+kubectl get configmap concept-config -o yaml
+kubectl exec deploy/concept-web -- printenv GREETING
+```
+
+### Break & repair
+
+Change the value — Pods still show the old env until restarted:
+
+```bash
+kubectl patch configmap concept-config -p '{"data":{"GREETING":"Updated"}}'
+kubectl exec deploy/concept-web -- printenv GREETING   # still old
+kubectl rollout restart deployment/concept-web
+kubectl exec deploy/concept-web -- printenv GREETING   # Updated
+```
+
+Next: [Secret](secret.md).
+
 ## How it relates to other objects
 
 - **Pod / Deployment / StatefulSet** — reference ConfigMaps in `env`, `envFrom`, or `volumeMounts`.

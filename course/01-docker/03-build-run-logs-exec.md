@@ -65,6 +65,8 @@ curl -s http://localhost:8080/
 
 **Why:** Containers print app output to stdout/stderr. `docker logs` is your first debug tool when something fails.
 
+> **Debugging habit:** When anything breaks, always check **state** (`docker ps -a`) then **logs** (`docker logs --tail 20 …`) before changing config. Full checklist: [Debugging containers](00-debugging-containers.md).
+
 ```bash
 docker logs hello-web
 ```
@@ -217,6 +219,8 @@ In production, teams keep several tags (`1.0`, `1.1`, `latest`) in a registry an
 
 ## Break & repair
 
+Use the [debugging workflow](00-debugging-containers.md) if you are unsure where to start: **observe → state → logs → fix → verify**.
+
 **Wrong host port mapped**
 
 ```bash
@@ -271,6 +275,7 @@ Keep `nginx:1.27` if other lessons need it.
 
 - Run a container in the background with `-d`, `-p`, and `--name`.
 - Read container output with `docker logs` (including `--tail` and `-f`).
+- Apply the [debugging workflow](00-debugging-containers.md) when a container exits or misbehaves.
 - Use `docker exec` and `docker exec -it` inside a **running** container.
 - Build a new image tag after a code change and **replace** the container to deploy it.
 - Explain why `docker build` alone does not update a already-running container.

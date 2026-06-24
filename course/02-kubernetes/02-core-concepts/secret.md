@@ -8,6 +8,41 @@ A **Secret** stores **sensitive** data: passwords, API tokens, TLS certificates,
 
 Pods consume Secrets the same ways as ConfigMaps: environment variables or mounted files (often as files under `/etc/secrets/...`).
 
+## Example — add to the cluster
+
+**What's new:** a sensitive value separate from ConfigMap.
+
+**Before this step:** [ConfigMap](configmap.md) — `concept-config` on `concept-web`.
+
+Create the Secret:
+
+```bash
+kubectl create secret generic concept-secret -n kube-lab \
+  --from-literal=API_TOKEN=dev-token-not-for-production
+```
+
+Add to the Deployment:
+
+```bash
+kubectl set env deployment/concept-web API_TOKEN= \
+  --from=secret/concept-secret --keys=API_TOKEN
+```
+
+### Verify
+
+```bash
+kubectl get secret concept-secret
+kubectl exec deploy/concept-web -- printenv API_TOKEN
+```
+
+(`kubectl get secret -o yaml` shows base64-encoded data — not encryption.)
+
+### Break & repair
+
+Put a password in a ConfigMap by mistake — anyone with `kubectl get configmap -o yaml` sees plain text. Move it to a Secret and remove it from the ConfigMap.
+
+Next: [ServiceAccount](serviceaccount.md).
+
 ## How it relates to other objects
 
 - **ConfigMap** — same injection patterns; ConfigMap for non-sensitive, Secret for sensitive.

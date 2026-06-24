@@ -8,6 +8,40 @@ A **ServiceAccount** is an **identity for Pods** inside the cluster. When a Pod 
 
 Every namespace has a `default` ServiceAccount; production apps usually get a dedicated ServiceAccount with only the permissions they need.
 
+## Example — add to the cluster
+
+**What's new:** Pods run as a named identity instead of only `default`.
+
+**Before this step:** [Secret](secret.md) — `concept-web` has config + secret env vars.
+
+Create and attach:
+
+```bash
+kubectl create serviceaccount concept-sa -n kube-lab
+kubectl patch deployment concept-web -n kube-lab -p \
+  '{"spec":{"template":{"spec":{"serviceAccountName":"concept-sa"}}}}'
+kubectl rollout status deployment/concept-web
+```
+
+### Verify
+
+```bash
+kubectl get sa concept-sa
+POD=$(kubectl get pod -l app=concept-web -o jsonpath='{.items[0].metadata.name}')
+kubectl get pod "$POD" -o jsonpath='{.spec.serviceAccountName}{"\n"}'
+```
+
+### Break & repair
+
+Remove `serviceAccountName` — Pod falls back to `default`:
+
+```bash
+kubectl patch deployment concept-web -p \
+  '{"spec":{"template":{"spec":{"serviceAccountName":null}}}}'
+```
+
+Next: [ClusterIP Service](clusterip-service.md).
+
 ## How it relates to other objects
 
 - **Pod / Deployment** — `serviceAccountName` in the Pod spec selects which ServiceAccount to use.

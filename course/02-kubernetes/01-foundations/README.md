@@ -4,8 +4,7 @@ Cluster architecture, `kubectl`, YAML.
 
 This phase is about the minimum knowledge to comfortably create and debug Kubernetes resources.
 
-**Before you start:** complete [Phase 0 tooling setup](../../00-getting-started/00-tooling-setup.md).  
-Section [01-where-to-run-cluster.md](01-where-to-run-cluster.md) explains local vs cloud choices (concepts); cluster creation is in Phase 0.
+**Before you start:** complete [Phase 0 tooling setup](../../00-getting-started/00-tooling-setup.md) — pick [macOS](../../00-getting-started/00-tooling-setup-macos.md) or [Linux](../../00-getting-started/00-tooling-setup-linux.md).
 
 ## Sections
 

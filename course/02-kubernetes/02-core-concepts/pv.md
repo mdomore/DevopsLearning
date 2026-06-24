@@ -8,6 +8,39 @@ A **PersistentVolume (PV)** represents a **piece of storage** in the cluster —
 
 A PV can be created by an admin (static) or automatically by a **StorageClass** (dynamic provisioning).
 
+## Example — add to the cluster
+
+**What's new:** you see the **actual volume** bound to `concept-pvc` (dynamic provisioning — you did not create the PV by hand).
+
+**Before this step:** [PVC](pvc.md) — `concept-pvc` status `Bound`.
+
+Observe the binding:
+
+```bash
+kubectl get pvc concept-pvc
+kubectl get pv
+kubectl describe pvc concept-pvc | grep -E 'Volume:|StorageClass'
+```
+
+The PV name is auto-generated. `concept-pvc` ↔ one PV is a 1:1 bind while in use.
+
+### Verify
+
+```bash
+PV=$(kubectl get pvc concept-pvc -o jsonpath='{.spec.volumeName}')
+kubectl get pv "$PV" -o wide
+```
+
+### Break & repair
+
+PVC stuck `Pending` — usually no StorageClass or no capacity. Fix the PVC spec or install a default StorageClass, then re-check events:
+
+```bash
+kubectl describe pvc concept-pvc
+```
+
+Next: [StatefulSet](statefulset.md).
+
 ## How it relates to other objects
 
 - **PVC** — a workload **claims** storage; PV is bound to a matching PVC.

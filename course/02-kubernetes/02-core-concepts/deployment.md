@@ -8,6 +8,68 @@ A **Deployment** manages **ReplicaSets** for **stateless** applications — apps
 
 When you change the Pod template (for example a new image tag), the Deployment creates a new ReplicaSet and gradually shifts traffic to new Pods while retiring old ones.
 
+## Example — add to the cluster
+
+**What's new:** a **Deployment** becomes the main app (`concept-web`); rolling updates and rollbacks later.
+
+**Before this step:** [ReplicaSet](replicaset.md). Optional cleanup so labels do not overlap:
+
+```bash
+kubectl delete pod concept-pod --ignore-not-found
+kubectl delete replicaset concept-rs --ignore-not-found
+```
+
+Save as `~/kube-lab/manifests/concepts/03-deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: concept-web
+  namespace: kube-lab
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: concept-web
+  template:
+    metadata:
+      labels:
+        app: concept-web
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.27
+        ports:
+        - containerPort: 80
+```
+
+Apply:
+
+```bash
+kubectl apply -f ~/kube-lab/manifests/concepts/03-deployment.yaml
+```
+
+### Verify
+
+```bash
+kubectl get deploy concept-web
+kubectl get pods -l app=concept-web
+kubectl get rs -l app=concept-web
+```
+
+### Break & repair
+
+Change the image tag and watch a rolling update:
+
+```bash
+kubectl set image deployment/concept-web web=nginx:1.27-alpine
+kubectl rollout status deployment/concept-web
+kubectl rollout undo deployment/concept-web   # rollback
+```
+
+Later steps patch this same Deployment. Next: [ConfigMap](configmap.md).
+
 ## How it relates to other objects
 
 - **ReplicaSet** — Deployment owns ReplicaSets; each template change can create a new ReplicaSet.

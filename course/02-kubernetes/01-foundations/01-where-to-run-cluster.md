@@ -10,7 +10,7 @@ Previous: [Prerequisites](00-prerequisites.md)
 
 Kubernetes runs on a **cluster** — one or more machines (physical, virtual, or local) managed by Kubernetes control-plane software. Before you write YAML, you choose **where** that cluster lives.
 
-**Problem this section solves:** There are many ways to run Kubernetes (laptop, cloud, managed service). Picking the wrong option early wastes money or adds friction. This page gives a simple decision path for **learning** this course.
+**Problem this section solves:** There are many ways to run Kubernetes (laptop, cloud, managed service). Picking the wrong option early wastes money or adds friction.
 
 You can run a full cluster on your own computer for most of Phase 1–2. Move to a small **managed cloud** cluster only when you need real external networking, cloud LoadBalancers, or IAM integrations.
 
@@ -22,18 +22,15 @@ A **local cluster** runs on your machine inside VMs or containers. Cost is usual
 
 Good fits for this course:
 
-| Option | Notes |
-|---|---|
-| **[kind](https://kind.sigs.k8s.io/)** (Kubernetes in Docker) | Reproducible; matches many course labs; needs Docker |
-| **[minikube](https://minikube.sigs.k8s.io/)** | Beginner-friendly single-node (or multi-node) cluster |
-| **Docker Desktop Kubernetes** | Easiest GUI toggle; fine for early exploration |
 
-Use local when learning: `kubectl`, Pods, Deployments, Services, ConfigMaps, debugging with `describe` and `logs`.
+| Option                                        | Notes                                                      |
+| --------------------------------------------- | ---------------------------------------------------------- |
+| **kind**                                      | Default on Linux; CLI option on macOS — see OS setup guide |
+| **Docker Desktop Kubernetes**                 | GUI on macOS (recommended if you use Docker Desktop)       |
+| **[minikube](https://minikube.sigs.k8s.io/)** | Alternative; not used in this course                       |
 
-Install and verify via your OS guide under [Phase 0 — Tooling setup](../../00-getting-started/00-tooling-setup.md):
 
-- macOS → [00-tooling-setup-macos.md](../../00-getting-started/00-tooling-setup-macos.md)
-- Linux → [00-tooling-setup-linux.md](../../00-getting-started/00-tooling-setup-linux.md)
+**Install steps:** only in your OS guide — [macOS](../../00-getting-started/00-tooling-setup-macos.md) Step 4–5 or [Linux](../../00-getting-started/00-tooling-setup-linux.md) Step 4–5.
 
 Quick sanity check after Phase 0:
 
@@ -55,11 +52,13 @@ A **managed** cluster (cloud provider runs the control plane) is useful when lab
 
 Examples (not required for early chapters):
 
-| Provider | Typical use in learning |
-|---|---|
-| **DigitalOcean Kubernetes (DOKS)** | Often simpler/cheaper for personal labs |
-| **Hetzner** (where available) | Lower-cost option in supported regions |
-| **AWS EKS** | Best when your goal is AWS-native production patterns |
+
+| Provider                           | Typical use in learning                               |
+| ---------------------------------- | ----------------------------------------------------- |
+| **DigitalOcean Kubernetes (DOKS)** | Often simpler/cheaper for personal labs               |
+| **Hetzner** (where available)      | Lower-cost option in supported regions                |
+| **AWS EKS**                        | Best when your goal is AWS-native production patterns |
+
 
 **Short recommendation:** Start **local** for Phase 1 and most of Phase 2. Add a **small managed cluster** only for specific cloud networking or IAM exercises.
 
@@ -67,18 +66,24 @@ Examples (not required for early chapters):
 
 ## Implementation (choose your path)
 
-### Path A — Local (default for this course)
+### Local — already done in Phase 0
 
-Follow Phase 0 for your OS until `kubectl get nodes` shows Ready.
+Follow your OS guide until `kubectl get nodes` shows Ready:
 
-If you use `kind` with cluster name `kube-lab` (as in Phase 0):
+- [macOS setup — Step 5](../../00-getting-started/00-tooling-setup-macos.md#step-5--verify-cluster-and-namespace-kube-lab)
+- [Linux setup — Step 5](../../00-getting-started/00-tooling-setup-linux.md#step-5--create-local-cluster-and-namespace-kube-lab)
+
+Quick check:
 
 ```bash
-kind get clusters
+kubectl config current-context
 kubectl get nodes
+kubectl get ns kube-lab
 ```
 
-### Path B — Small managed cluster (optional, later)
+**Docker Desktop on macOS:** context is `docker-desktop`; lessons that say `kind-kube-lab` mean the same local cluster — use your active context.
+
+### Small managed cluster (optional, later)
 
 When you outgrow local-only labs:
 
@@ -136,7 +141,7 @@ kubectl get nodes
 ## You should now be able to…
 
 - Explain why a local cluster is enough for most early course labs.
-- Name two local options (`kind`, `minikube`, Docker Desktop) and link to Phase 0 for install steps.
+- Name local options (kind, Docker Desktop) and point to the [macOS](../../00-getting-started/00-tooling-setup-macos.md) or [Linux](../../00-getting-started/00-tooling-setup-linux.md) setup guide.
 - Describe when a managed cloud cluster is worth the extra cost and complexity.
 
 Next: [Cluster architecture](02-cluster-architecture.md)

@@ -23,7 +23,7 @@ Why Docker appears in Phase 0:
 
 - [ ] Install Docker (Engine on Linux, Desktop or Colima on macOS)
 - [ ] Install `kubectl`
-- [ ] Install `kind` and create cluster `kube-lab`
+- [ ] Local cluster + namespace `kube-lab` (OS guide Steps 4–5)
 - [ ] Install `terraform` CLI
 - [ ] Install AWS CLI + configure a lab profile
 
@@ -40,6 +40,7 @@ Chapter: [01-docker](../01-docker/)
 - [ ] Build, run, logs, exec
 - [ ] Volumes and port mapping
 - [ ] Docker Compose (multi-container apps)
+- [ ] **Capstone** — mini production stack (proxy + API + Redis)
 
 ---
 
@@ -79,7 +80,24 @@ Labs: [02-kubernetes/04-hands-on-labs](../02-kubernetes/04-hands-on-labs/)
 
 ---
 
-## Phase 5 — AWS
+## Phase 5 — Helm (Kubernetes packaging)
+
+Chapter: [02-kubernetes/05-helm](../02-kubernetes/05-helm/)
+
+**When:** After Phase 3–4 labs.
+
+- [ ] Vocabulary: chart, values, templates, repository, release, package
+- [ ] **CLI** — install `helm`, command map
+- [ ] **Chart** structure — `helm create`, `helm template`
+- [ ] **Repository** — `helm repo add`, search, show values
+- [ ] **install** + **release** — `helm install`, list, status
+- [ ] **upgrade** + **rollback** — revisions, `helm history`
+- [ ] **uninstall**
+- [ ] **package** — `helm package`, custom chart + `.tgz`
+
+---
+
+## Phase 6 — AWS
 
 Chapter: [04-aws](../04-aws/)
 
@@ -91,7 +109,7 @@ Chapter: [04-aws](../04-aws/)
 
 ---
 
-## Phase 6 — Terraform
+## Phase 7 — Terraform
 
 Chapter: [03-terraform](../03-terraform/)
 

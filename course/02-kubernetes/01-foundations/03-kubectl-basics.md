@@ -1,4 +1,4 @@
-# Topic B — `kubectl` basics (get/describe/apply/logs/exec)
+# 03— `kubectl` basics (get/describe/apply/logs/exec)
 
 **Before this section:** [Cluster architecture](02-cluster-architecture.md) — you know what a cluster and a Pod are at a high level.
 
@@ -8,17 +8,19 @@ Commands run in your **local terminal**. Your kubectl **context** should point a
 
 ## Explanation
 
-**`kubectl`** (kube-control) is the program you use to talk to the Kubernetes **API** — the front door of the cluster. Every command either reads state or asks for a change.
+`**kubectl`** (kube-control) is the program you use to talk to the Kubernetes **API** — the front door of the cluster. Every command either reads state or asks for a change.
 
 Think of it like a remote control for the cluster:
 
-| Command | What it does | When you use it |
-|---|---|---|
-| `kubectl get` | Lists resources (short summary) | “What is running?” |
-| `kubectl describe` | Detailed view + **Events** (timeline of what happened) | “Why is this Pod failing?” |
-| `kubectl apply -f` | Create or update from a YAML file | “Make the cluster match this file” |
-| `kubectl logs` | Prints container output | “What did the app print?” |
-| `kubectl exec` | Run a command inside a running container | “Let me check files/processes inside” |
+
+| Command            | What it does                                           | When you use it                       |
+| ------------------ | ------------------------------------------------------ | ------------------------------------- |
+| `kubectl get`      | Lists resources (short summary)                        | “What is running?”                    |
+| `kubectl describe` | Detailed view + **Events** (timeline of what happened) | “Why is this Pod failing?”            |
+| `kubectl apply -f` | Create or update from a YAML file                      | “Make the cluster match this file”    |
+| `kubectl logs`     | Prints container output                                | “What did the app print?”             |
+| `kubectl exec`     | Run a command inside a running container               | “Let me check files/processes inside” |
+
 
 **YAML file:** a text file describing *desired* state (kind, name, image, etc.). `apply` sends that wish to the cluster; controllers and the scheduler make it real.
 
@@ -55,8 +57,11 @@ Now practice the core commands:
 kubectl get pod kubectl-demo -o wide
 kubectl describe pod kubectl-demo
 kubectl logs kubectl-demo
-kubectl exec -it kubectl-demo -- sh -c 'nginx -v && ps aux | head'
+kubectl exec -it kubectl-demo -- nginx -v
+kubectl exec -it kubectl-demo -- sh -c 'ls /proc/1 && cat /proc/1/cmdline | tr "\0" " "'
 ```
+
+**Note on `exec`:** The official **nginx** image is minimal — it includes `sh` but often **not** `ps`. That is normal (same idea as Docker lesson: small images, fewer tools). Use `nginx -v` or read `/proc/1/cmdline` to see the main process instead of `ps aux`.
 
 Quick YAML apply/update:
 

@@ -22,6 +22,7 @@ Docker · Kubernetes · Terraform · AWS
 
 1. **Phase 0** — install Docker, `kubectl`, `kind`, Terraform CLI, AWS CLI
 2. **Docker** — understand containers before Kubernetes
-3. **Kubernetes** — foundations → concepts → hands-on labs
+3. **Kubernetes** — foundations → concepts → hands-on labs → **Helm**
 4. **AWS** — IAM, VPC, EKS basics (needed before cloud Terraform labs)
 5. **Terraform** — HCL and state first, then AWS VPC/EKS labs
+6. **Docker capstone** (optional but recommended) — [mini production stack](course/01-docker/06-capstone-mini-stack.md) before Kubernetes

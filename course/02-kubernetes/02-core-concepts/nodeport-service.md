@@ -8,6 +8,36 @@ A **NodePort** Service exposes your app on a **fixed port on every node** (typic
 
 Trade-off: quick external access, but not ideal for production (wide exposure, non-standard ports, no L7 routing by host/path).
 
+## Example — add to the cluster
+
+**What's new:** the same Service is reachable from your laptop via a high port on the node.
+
+**Before this step:** [ClusterIP Service](clusterip-service.md) — Service `concept-web` exists.
+
+Change type (keeps ClusterIP behavior inside the cluster):
+
+```bash
+kubectl patch svc concept-web -n kube-lab -p '{"spec":{"type":"NodePort"}}'
+NODE_PORT=$(kubectl get svc concept-web -o jsonpath='{.spec.ports[0].nodePort}')
+echo "NodePort: $NODE_PORT"
+```
+
+### Verify
+
+Docker Desktop — node IP is usually `127.0.0.1`:
+
+```bash
+curl -s "http://127.0.0.1:${NODE_PORT}"
+```
+
+kind — use the node’s internal IP from `kubectl get nodes -o wide`.
+
+### Break & repair
+
+NodePort in range 30000–32767; if you set an invalid port in YAML, `kubectl apply` fails — remove `nodePort:` to let Kubernetes assign one.
+
+Next: [StorageClass](storageclass.md) (storage track).
+
 ## How it relates to other objects
 
 - **ClusterIP** — NodePort extends ClusterIP; internal cluster access still works via the ClusterIP.

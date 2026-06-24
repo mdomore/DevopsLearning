@@ -6,6 +6,20 @@ Kubernetes objects work together. This page is a **mental map** — not somethin
 
 **Problem it solves:** Beginners see many resource kinds (Pod, Deployment, Service, Ingress, PVC…) and lose track of dependencies. The map shows the usual direction of control and traffic.
 
+## Progressive stack (this course)
+
+Follow [progressive-stack.md](progressive-stack.md) — each concept adds one object to `kube-lab`:
+
+```
+kube-lab (namespace)
+  ├─ concept-pod → concept-rs → concept-web (Deployment)
+  │     + concept-config, concept-secret, concept-sa
+  │     + Service concept-web (ClusterIP → NodePort)
+  │     + Ingress concept-ing
+  ├─ concept-pvc → concept-storage (Pod) → PV (auto)
+  └─ concept-sts + concept-sts-headless + PVCs per replica
+```
+
 ## How objects connect
 
 **Workloads (what runs)**

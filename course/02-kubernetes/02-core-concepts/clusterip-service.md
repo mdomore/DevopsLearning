@@ -8,6 +8,56 @@ A **Service** gives Pods a **stable network address** even though Pods come and 
 
 ClusterIP is what you use for east-west traffic: frontend → backend, app → database sidecar, microservice to microservice.
 
+## Example — add to the cluster
+
+**What's new:** stable DNS name and virtual IP in front of `concept-web` Pods.
+
+**Before this step:** [ServiceAccount](serviceaccount.md) — Deployment `concept-web` with 2 replicas.
+
+Save as `~/kube-lab/manifests/concepts/07-clusterip.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: concept-web
+  namespace: kube-lab
+spec:
+  type: ClusterIP
+  selector:
+    app: concept-web
+  ports:
+  - port: 80
+    targetPort: 80
+```
+
+Apply:
+
+```bash
+kubectl apply -f ~/kube-lab/manifests/concepts/07-clusterip.yaml
+```
+
+### Verify
+
+```bash
+kubectl get svc concept-web
+kubectl get endpoints concept-web
+kubectl run curl-test --rm -it --restart=Never --image=curlimages/curl:8.5.0 -n kube-lab -- \
+  curl -s http://concept-web
+```
+
+### Break & repair
+
+Wrong selector — Service has no endpoints:
+
+```bash
+kubectl patch svc concept-web -p '{"spec":{"selector":{"app":"wrong-label"}}}'
+kubectl get endpoints concept-web   # empty
+kubectl patch svc concept-web -p '{"spec":{"selector":{"app":"concept-web"}}}'
+```
+
+Next: [NodePort](nodeport-service.md).
+
 ## How it relates to other objects
 
 - **Pod / Deployment** — Service `selector` matches Pod labels; endpoints update as Pods change.

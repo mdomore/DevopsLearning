@@ -14,9 +14,10 @@ Not everything is reversible the same way:
 
 | What you created | Reversible? | How |
 |---|---|---|
-| kind cluster `kube-lab` | Yes | Delete the cluster — removes cluster containers |
+| kind cluster `kube-lab` (Path A) | Yes | Delete the cluster — removes cluster containers |
+| Docker Desktop Kubernetes (Path B) | Yes | Disable/remove in Docker Desktop → Settings → Kubernetes |
 | Kubernetes objects in `kube-lab` namespace | Yes | Delete namespace or individual resources |
-| kubectl context `kind-kube-lab` | Yes | Remove from kubeconfig after cluster delete |
+| kubectl context `kind-kube-lab` or `docker-desktop` | Yes | Remove from kubeconfig after cluster delete / disable |
 | AWS CLI profile `lab` (local files only) | Yes | Remove `[lab]` sections from `~/.aws/*` |
 | AWS IAM user + keys (cloud) | Yes | Delete in IAM console |
 | Docker images/containers from labs | Mostly yes | Stop/remove containers; optionally remove images |
@@ -67,9 +68,40 @@ kubectl config use-context kind-kube-lab
 
 ---
 
+## 1b — Disable Docker Desktop Kubernetes (Path B)
+
+### When to use
+
+- You use Docker Desktop’s built-in cluster (context `docker-desktop`)
+- You want RAM/CPU back without uninstalling Docker Desktop
+
+### Steps
+
+1. Open **Docker Desktop**
+2. **Settings → Kubernetes** — disable Kubernetes or remove the cluster
+3. **Apply & restart** if prompted
+
+Verify:
+
+```bash
+kubectl config get-contexts
+kubectl get nodes   # should fail or point at another context if cluster is gone
+```
+
+To re-enable later, use **Kubernetes → Create cluster** in Docker Desktop, then:
+
+```bash
+kubectl config use-context docker-desktop
+kubectl get nodes
+```
+
+More: [00-tooling-setup-macos.md](00-tooling-setup-macos.md) (Option B) · [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
+
+---
+
 ## 2 — Remove kubectl context (optional)
 
-After deleting the kind cluster, your kubeconfig may still list `kind-kube-lab`.
+After deleting the kind cluster or disabling Docker Desktop Kubernetes, your kubeconfig may still list `kind-kube-lab` or `docker-desktop`.
 
 View contexts:
 
@@ -77,10 +109,11 @@ View contexts:
 kubectl config get-contexts
 ```
 
-Remove the stale context:
+Remove stale contexts after deleting a cluster:
 
 ```bash
-kubectl config delete-context kind-kube-lab
+kubectl config delete-context kind-kube-lab      # Path A
+kubectl config delete-context docker-desktop   # Path B (optional)
 ```
 
 If you set `kube-lab` as default namespace on another context, switch namespace back:

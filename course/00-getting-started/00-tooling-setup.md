@@ -20,14 +20,16 @@ Commands run in your **local terminal** unless noted.
 
 | Tool | Role in this course |
 |---|---|
-| **Docker** | Runs containers locally; required by `kind` for a local Kubernetes cluster |
+| **Docker** | Runs containers locally; required for local Kubernetes (via `kind` or Docker Desktop) |
 | **kubectl** | Command-line client to talk to a Kubernetes cluster |
-| **kind** | Creates a small local Kubernetes cluster inside Docker |
+| **Local cluster** | Created in your OS guide — macOS: kind or Docker Desktop · Linux: kind |
 | **Terraform** | Infrastructure as code (used in later AWS/EKS chapters) |
 | **AWS CLI** | Talks to AWS from your terminal (used in later chapters) |
 
 **Why Docker before Kubernetes learning?**  
-Local Kubernetes labs need a container runtime. Tools like `kind` use Docker to spin up cluster nodes — you install Docker now so Phase 2 labs work, but you learn how containers work in Phase 1.
+Local Kubernetes labs need a container runtime. You install Docker in Phase 0 so Phase 2 labs work; you learn how containers work in Phase 1.
+
+**Cluster setup** is entirely in your OS guide (Steps 4–5) — no separate document.
 
 ---
 
@@ -37,8 +39,7 @@ Mark Phase 0 done when all of these work (on any OS):
 
 - [ ] `docker version` (client + server)
 - [ ] `kubectl version --client`
-- [ ] `kubectl get nodes` shows a `Ready` node
-- [ ] `kind get clusters` lists `kube-lab`
+- [ ] `kubectl get nodes` shows a `Ready` node (see your OS guide Steps 4–5)
 - [ ] `terraform version`
 - [ ] `aws --version`
 - [ ] `aws sts get-caller-identity` **or** `aws sts get-caller-identity --profile lab` (if you created a lab profile)

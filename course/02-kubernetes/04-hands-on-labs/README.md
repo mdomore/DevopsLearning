@@ -11,7 +11,7 @@ Each lab follows the same structure:
 5. **Break & repair** — one common mistake and how to fix it
 6. **You should now be able to…** — checklist before moving on
 
-**Before Lab 0:** [Phase 0 tooling](../../00-getting-started/00-tooling-setup.md) and [Kubernetes prerequisites](../01-foundations/00-prerequisites.md).
+**Before Lab 0:** [Phase 0 tooling](../../00-getting-started/00-tooling-setup.md) (cluster in your OS guide) and [Kubernetes prerequisites](../01-foundations/00-prerequisites.md).
 
 | # | Lab | File |
 |---|---|---|

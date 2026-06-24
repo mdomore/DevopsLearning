@@ -124,8 +124,8 @@ kubectl version --client
 
 ### Explanation
 
-`kind` is not always available as a distro package.  
-We install the official binary into `/usr/local/bin`.
+On Linux, the standard setup is **kind** — a local cluster inside Docker Engine.  
+`kind` is not always in distro packages; we install the official binary.
 
 ### Implementation
 
@@ -150,43 +150,56 @@ kind version
 
 ---
 
-## Step 5 — Create your local Kubernetes cluster
+## Step 5 — Create local cluster and namespace `kube-lab`
 
-### Explanation
-
-Creates cluster `kube-lab`. `kubectl` will use context `kind-kube-lab`.
-
-### Implementation
+### Create the cluster
 
 ```bash
 kind create cluster --name kube-lab
-kubectl cluster-info --context kind-kube-lab
-kubectl get nodes
-```
-
-Optional default context:
-
-```bash
 kubectl config use-context kind-kube-lab
-```
-
-### Verification
-
-```bash
-kubectl config current-context
 kubectl get nodes
 ```
 
-Expected: context `kind-kube-lab`, one node `Ready`.
+Expected: one node **Ready**, context **`kind-kube-lab`**.
+
+### Prepare the course sandbox
+
+```bash
+kubectl create namespace kube-lab
+kubectl config set-context --current --namespace=kube-lab
+kubectl auth can-i create pods --namespace=kube-lab
+```
+
+Expected: `yes`.
 
 ### Cleanup / revert
 
 ```bash
 kind delete cluster --name kube-lab
+kubectl config delete-context kind-kube-lab   # optional
 ```
 
 Recreate: `kind create cluster --name kube-lab`  
-Full guide: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
+Full undo: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
+
+### Break & repair
+
+- **`kind create cluster` fails** → `sudo systemctl status docker`; start with `sudo systemctl enable --now docker`
+- **cgroup / iptables errors** → ensure Docker Engine (Step 2) works: `docker run --rm hello-world`
+- **Wrong context** → `kubectl config use-context kind-kube-lab`
+
+---
+
+### Optional — Docker Desktop Kubernetes (Linux)
+
+Only if you use [Docker Desktop for Linux](https://docs.docker.com/desktop/setup/install/linux/) instead of Docker Engine + kind:
+
+- Requires KVM; supported on Ubuntu, Debian, Fedora, RHEL
+- Install **`kubectl`** separately (Step 3) — Docker Desktop on Linux does not bundle it
+- **Kubernetes** → **Create cluster**: type **kind**, **1 node**, default version
+- Context: **`docker-desktop`** — when lessons say `kind-kube-lab`, use `docker-desktop` instead
+
+Most Linux learners should use **kind** (Steps 4–5 above) — simpler and matches course docs.
 
 ---
 
@@ -339,7 +352,8 @@ aws sts get-caller-identity --profile lab
 
 | What | Revert |
 |---|---|
-| kind cluster | `kind delete cluster --name kube-lab` |
+| kind cluster (Path A) | `kind delete cluster --name kube-lab` |
+| Docker Desktop Kubernetes (optional) | Disable in Docker Desktop → Settings → Kubernetes |
 | AWS profile `lab` | Edit `~/.aws/credentials` and `~/.aws/config` |
 | Tools (optional) | `sudo apt-get remove` / package manager — only if unused |
 
@@ -352,7 +366,8 @@ Full guide: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
 - [ ] `docker version` (client + server)
 - [ ] `kubectl version --client`
 - [ ] `kind version`
-- [ ] `kubectl get nodes` shows `Ready`
+- [ ] `kubectl get nodes` → **Ready** (context `kind-kube-lab`)
+- [ ] Namespace `kube-lab` created
 - [ ] `terraform version`
 - [ ] `aws --version`
 

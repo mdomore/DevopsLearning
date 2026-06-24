@@ -40,7 +40,7 @@ Observe workers:
 
 ```bash
 kubectl get nodes -o wide
-kubectl describe node "$(kubectl get nodes -o name | head -n 1)"
+kubectl describe "$(kubectl get nodes -o name | head -n 1)"
 ```
 
 Observe Pods and where they run:
@@ -89,13 +89,13 @@ spec:
 EOF
 ```
 
-2. Verify it ran on a node:
+1. Verify it ran on a node:
 
 ```bash
 kubectl get pod arch-sleep -o wide
 ```
 
-3. Repair: delete it (clean state):
+1. Repair: delete it (clean state):
 
 ```bash
 kubectl delete pod arch-sleep
@@ -135,6 +135,7 @@ kubectl delete pod arch-crash
 ```
 
 Notes:
+
 - This doesn’t “break architecture” itself, but it gives you a practical control-plane/worker mental model using scheduling + events + logs.
 
 ---
@@ -145,4 +146,4 @@ Notes:
 - Run `kubectl get nodes` and `kubectl get pods -o wide` and explain what the `NODE` column means
 - Create a Pod and find scheduling/errors using `describe` and Events
 
-Previous: [Where to run your cluster](01-where-to-run-cluster.md) · Next: [`kubectl` basics](03-kubectl-basics.md)
+Previous: [Where to run your cluster](01-where-to-run-cluster.md) · Next: `[kubectl` basics](03-kubectl-basics.md)

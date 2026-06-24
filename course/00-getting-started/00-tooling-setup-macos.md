@@ -88,67 +88,128 @@ Expected: client version is printed (server may be unavailable until a cluster e
 
 ---
 
-## Step 4 — Install kind
+## Step 4 — Local Kubernetes cluster
 
 ### Explanation
 
-`kind` = **K**ubernetes **in** **D**ocker.  
-It creates a cluster as Docker containers — free, fast, easy to delete.
+You need **one** working local cluster before Phase 2. Install **`kubectl`** in Step 3 first.
 
-### Implementation
+**Pick one option below** — do not run both unless you know how to switch contexts.
 
-```bash
-brew install kind
-```
+| Option | When to choose | kubectl context |
+|---|---|---|
+| **A — kind** (CLI) | You use **Colima**, or you prefer a dedicated lab cluster named `kube-lab` | `kind-kube-lab` |
+| **B — Docker Desktop Kubernetes** (GUI) | You installed **Docker Desktop** in Step 2 — **recommended** | `docker-desktop` |
 
-### Verification
-
-```bash
-kind version
-```
+**Course note:** Lessons often mention context `kind-kube-lab`. If you chose **Option B**, use **`docker-desktop`** instead (same cluster, different name in kubeconfig).
 
 ---
 
-## Step 5 — Create your local Kubernetes cluster
+### Option A — kind (CLI)
 
-### Explanation
-
-Creates cluster `kube-lab`. After this, `kubectl` has a **context** pointing at that cluster.
-
-### Implementation
+`kind` = **K**ubernetes **in** **D**ocker — cluster nodes run as Docker containers.
 
 ```bash
+brew install kind
+kind version
+
 kind create cluster --name kube-lab
-kubectl cluster-info --context kind-kube-lab
+kubectl config use-context kind-kube-lab
 kubectl get nodes
 ```
 
-Optional default context:
+Expected: one node **Ready**, context **`kind-kube-lab`**.
+
+**Cleanup:**
 
 ```bash
-kubectl config use-context kind-kube-lab
+kind delete cluster --name kube-lab
+kubectl config delete-context kind-kube-lab   # optional
 ```
 
-### Verification
+**Break & repair:**
+
+- `kind create cluster` fails → Docker must run (`docker version`); delete stale cluster: `kind delete cluster --name kube-lab`
+- Wrong context → `kubectl config use-context kind-kube-lab`
+
+---
+
+### Option B — Docker Desktop Kubernetes (GUI)
+
+Uses Kubernetes built into Docker Desktop — no `brew install kind` required.
+
+**Requirements:** Docker Desktop **4.37+** (Create cluster UI ~**4.51+**), macOS **14+**, **8 GB RAM** recommended.
+
+1. Open **Docker Desktop** → wait for **Docker is running**
+2. **Kubernetes** → **Create cluster**
+3. Settings:
+
+| Setting | Value for this course |
+|---|---|
+| **Cluster type** | **kind** (not kubeadm) |
+| **Node(s)** | **1** |
+| **Kubernetes version** | **Default** (e.g. 1.34.x) |
+| **Show system containers** | **Off** (optional; keeps `docker ps` clean) |
+
+4. Click **Create** — first start downloads images (several minutes)
+
+**If creation fails:** enable **containerd image store** in Docker Desktop → Settings → General, then retry.
+
+**Changing node count or version later resets the cluster** — all resources are deleted.
+
+Verify:
+
+```bash
+kubectl config use-context docker-desktop
+kubectl get nodes
+```
+
+Expected: one node **Ready**, context **`docker-desktop`**.
+
+**Cleanup:** Docker Desktop → Settings → Kubernetes → disable / remove cluster.
+
+**Break & repair:**
+
+- Connection refused → Kubernetes not running in Docker Desktop; recreate cluster
+- Two `kubectl` binaries → `which -a kubectl` — Homebrew vs Docker Desktop; prefer one on your `PATH`
+
+**Skip Option A** if you only use Option B.
+
+---
+
+## Step 5 — Verify cluster and namespace `kube-lab`
 
 ```bash
 kubectl config current-context
 kubectl get nodes
 ```
 
-Expected: context `kind-kube-lab`, one node `Ready`.
+| Option | Expected context | Typical node name |
+|---|---|---|
+| A | `kind-kube-lab` | `kube-lab-control-plane` |
+| B | `docker-desktop` | `desktop-control-plane` |
 
-### Cleanup / revert
+**What matters:** one node, `STATUS` **Ready**, `ROLES` includes `control-plane`.  
+The **node name** and **INTERNAL-IP** differ between options — that is normal, not an error.
 
-Delete the cluster when you want resources back or need a clean recreate:
+Example (Option B — Docker Desktop):
 
-```bash
-kind delete cluster --name kube-lab
+```text
+NAME                    STATUS   ROLES           VERSION
+desktop-control-plane   Ready    control-plane   v1.34.3
 ```
 
-Recreate anytime: `kind create cluster --name kube-lab`
+Prepare the course sandbox (same for both options):
 
-More: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
+```bash
+kubectl create namespace kube-lab
+kubectl config set-context --current --namespace=kube-lab
+kubectl auth can-i create pods --namespace=kube-lab
+```
+
+Expected: `yes`.
+
+Full undo: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
 
 ---
 
@@ -334,8 +395,9 @@ Full undo guide: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
 
 | What | Revert |
 |---|---|
-| kind cluster `kube-lab` | `kind delete cluster --name kube-lab` |
-| kubectl context | `kubectl config delete-context kind-kube-lab` |
+| kind cluster `kube-lab` (Path A) | `kind delete cluster --name kube-lab` |
+| Docker Desktop Kubernetes (Path B) | Disable in Docker Desktop → Settings → Kubernetes |
+| kubectl context | `kubectl config delete-context kind-kube-lab` or switch away from `docker-desktop` |
 | AWS profile `lab` (local) | Remove `[lab]` from `~/.aws/credentials` and `~/.aws/config` |
 | Tools (optional) | `brew uninstall kind kubectl terraform awscli` — only if unused elsewhere |
 
@@ -349,7 +411,8 @@ Details: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
 → Open Docker Desktop, or run `colima start`.
 
 **`kubectl get nodes` connection refused**  
-→ `kind create cluster --name kube-lab` or `kubectl config use-context kind-kube-lab`.
+→ Option A: `kind create cluster --name kube-lab` or `kubectl config use-context kind-kube-lab`  
+→ Option B: open Docker Desktop, ensure Kubernetes is running, `kubectl config use-context docker-desktop`
 
 **`kind create cluster` fails**  
 → Fix Docker first; if name conflict: `kind delete cluster --name kube-lab`.
@@ -357,4 +420,15 @@ Details: [00-tooling-setup-cleanup.md](00-tooling-setup-cleanup.md)
 **AWS identity fails**  
 → See Step 7 break & repair (profile not found vs wrong keys).
 
-Previous: [Tooling index](00-tooling-setup.md) · Next: [Phase 1 — Docker](../01-docker/01-docker-basics.md)
+---
+
+## Phase 0 completion checklist (macOS)
+
+- [ ] `docker version` (client + server)
+- [ ] `kubectl version --client`
+- [ ] `kubectl get nodes` → **Ready** (context `kind-kube-lab` or `docker-desktop`)
+- [ ] Namespace `kube-lab` created; `kubectl auth can-i create pods --namespace=kube-lab` → **yes**
+- [ ] `terraform version`
+- [ ] `aws --version` and `aws sts get-caller-identity` (or `--profile lab`)
+
+Next: [Phase 1 — Docker](../01-docker/01-docker-basics.md)

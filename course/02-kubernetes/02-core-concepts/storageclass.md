@@ -8,6 +8,51 @@ A **StorageClass** describes **how** storage is provisioned: which driver, perfo
 
 On local lab clusters (`kind`, `minikube`), a default StorageClass often exists so simple PVCs “just work.”
 
+## Example — add to the cluster
+
+**What's new:** you discover how the cluster **provisions disks** — usually no YAML to apply on Docker Desktop / kind.
+
+**Before this step:** [NodePort](nodeport-service.md) — networking track for `concept-web` is complete.
+
+Inspect what already exists:
+
+```bash
+kubectl get storageclass
+kubectl describe storageclass "$(kubectl get sc -o jsonpath='{.items[0].metadata.name}')"
+```
+
+Note the **default** class (annotation `storageclass.kubernetes.io/is-default-class: "true"`). Later PVCs with no `storageClassName` use it.
+
+### Verify
+
+```bash
+kubectl get sc -o custom-columns=NAME:.metadata.name,PROVISIONER:.provisioner,DEFAULT:.metadata.annotations.storageclass\.kubernetes\.io/is-default-class
+```
+
+### Break & repair
+
+Create a PVC with a **fake** StorageClass name — it stays `Pending`:
+
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: concept-bad-pvc
+  namespace: kube-lab
+spec:
+  storageClassName: does-not-exist
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+kubectl get pvc concept-bad-pvc   # Pending
+kubectl delete pvc concept-bad-pvc
+```
+
+Next: [PVC](pvc.md).
+
 ## How it relates to other objects
 
 - **PVC** — `storageClassName` selects which StorageClass to use.

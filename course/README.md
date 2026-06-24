@@ -16,9 +16,11 @@ Comprehensive hands-on course covering **Docker**, **Kubernetes**, **Terraform**
 |---|---|---|
 | 0 | [00-getting-started](00-getting-started/) | Install tools; create local cluster — no concepts yet |
 | 1 | [01-docker](01-docker/) | Containers are the unit Kubernetes runs |
-| 2 | [02-kubernetes](02-kubernetes/) | Orchestration, networking, workloads |
+| 2 | [02-kubernetes](02-kubernetes/) | Orchestration, networking, workloads, **Helm** |
 | 3 | [04-aws](04-aws/) | Cloud basics before provisioning AWS with Terraform |
 | 4 | [03-terraform](03-terraform/) | IaC; AWS labs (VPC, EKS) after AWS chapter |
+
+**Kubernetes note:** Finish [hands-on labs](02-kubernetes/04-hands-on-labs/) before [Helm](02-kubernetes/05-helm/).
 
 **Terraform note:** Sections 1–5 (HCL, state, variables, modules) do not require AWS. Sections 6–7 (VPC, EKS labs) require the [AWS chapter](04-aws/) first.
 
@@ -28,7 +30,7 @@ Comprehensive hands-on course covering **Docker**, **Kubernetes**, **Terraform**
 |---|---|---|
 | Getting started | [00-getting-started](00-getting-started/) | Ready (tooling guides) |
 | Docker | [01-docker](01-docker/) | Ready |
-| Kubernetes | [02-kubernetes](02-kubernetes/) | Ready (foundations + labs) |
+| Kubernetes | [02-kubernetes](02-kubernetes/) | Ready (foundations + labs + [Helm](02-kubernetes/05-helm/)) |
 | AWS | [04-aws](04-aws/) | Ready (concepts; cloud labs in later phases) |
 | Terraform | [03-terraform](03-terraform/) | Ready (HCL + previews; full AWS labs after AWS chapter) |
 

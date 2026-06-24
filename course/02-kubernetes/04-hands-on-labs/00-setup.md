@@ -11,10 +11,10 @@ A **namespace** is a logical partition in Kubernetes — like a folder that grou
 
 **Prerequisites**
 
-- [Phase 0 tooling](../../00-getting-started/00-tooling-setup.md) completed — `kind` cluster `kube-lab` exists.
+- [Phase 0 tooling](../../00-getting-started/00-tooling-setup.md) completed — local cluster and namespace `kube-lab` (OS setup guide).
 - `kubectl get nodes` shows one node `Ready`.
 
-**Shell:** local terminal, `kubectl` connected to your kind cluster.
+**Shell:** local terminal, `kubectl` connected to your cluster (`kind-kube-lab` or `docker-desktop`).
 
 ## Implementation
 
